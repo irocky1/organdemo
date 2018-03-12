@@ -23,15 +23,6 @@ public class DeptService {
     private DeptMapper deptMapper;
 
     /**
-     * 1。新增部门
-     * 2。删除部门
-     * 3。更新部门
-     * 4。查询部门
-     *     4。1 查询一级子部门
-     *     4。2 其他需求？
-     */
-
-    /**
      * 通过主键查询部门详细信息
      * @param id
      * @return
@@ -211,36 +202,34 @@ public class DeptService {
         }
 
         List<DeptParam> result = new LinkedList<>();
-        List<Integer> right = new LinkedList<>(); //计数器
-        List<String> prev = new LinkedList<>();
-        List<Integer> prevId = new LinkedList<>();
+        List<Count> counts = new LinkedList<>(); //计数器
         List<Dept> deptList =  deptMapper.getChildren(thisDept);
 
         for(Dept dept : deptList){
-            if(right.size()>0){
+            if(counts.size()>0){
                 //检查是否应该移出堆栈
-                for(int i=0; i<right.size(); i++){
-                    if(right.get(i) < dept.getRight()){
-                        right.remove(i);
-                        prev.remove(i);
-                        prevId.remove(i);
+                for(int i=0; i<counts.size(); i++){
+                    if(counts.get(i).getRight() < dept.getRight()){
+                        counts.remove(i);
                     }
                 }
             }
 
-            String parent = prev.size()>0?prev.get(prev.size()-1):"";
-            Integer parentId = prevId.size()>0?prevId.get(prevId.size()-1):0;
+            String parent = counts.size()>0?counts.get(counts.size()-1).getPrev():"";
+            Integer parentId = counts.size()>0?counts.get(counts.size()-1).getPrevId():0;
             DeptParam param = new DeptParam();
             param.setId(dept.getId());
             param.setDeptName(dept.getDeptName());
-            param.setLevel(right.size());
+            param.setLevel(counts.size());
             param.setParent(parent);
             param.setParentId(parentId);
             result.add(param);
 
-            right.add(dept.getRight());
-            prev.add(dept.getDeptName());
-            prevId.add(dept.getId());
+            Count c = new Count();
+            c.setRight(dept.getRight());
+            c.setPrev(dept.getDeptName());
+            c.setPrevId(dept.getId());
+            counts.add(c);
         }
 
         return result;
@@ -253,5 +242,38 @@ public class DeptService {
      */
     public int updateDeptName(Dept dept) {
         return deptMapper.updateById(dept);
+    }
+}
+
+/**
+ * 计数器数据结构
+ */
+class Count{
+    private Integer right;
+    private String prev;
+    private Integer prevId;
+
+    public Integer getRight() {
+        return right;
+    }
+
+    public void setRight(Integer right) {
+        this.right = right;
+    }
+
+    public String getPrev() {
+        return prev;
+    }
+
+    public void setPrev(String prev) {
+        this.prev = prev;
+    }
+
+    public Integer getPrevId() {
+        return prevId;
+    }
+
+    public void setPrevId(Integer prevId) {
+        this.prevId = prevId;
     }
 }
