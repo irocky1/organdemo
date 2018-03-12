@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syswin.systoon.research.mapper.DeptMapper">
+    <resultMap id="dept" type="com.syswin.systoon.research.entity.Dept">
+        <id column="id" property="id"></id>
+        <result column="dept_name" property="deptName"/>
+        <result column="lft" property="left"/>
+        <result column="rgt" property="right"/>
+        <result column="flag" property="flag" />
+        <result column="org_id" property="orgId" />
+        <result column="deep" property="deep" />
+    </resultMap>
+
+    <!--主表所有字段 -->
+    <sql id="base_column">
+        id,dept_name,lft,rgt,flag,org_id
+    </sql>
+    <!--视图所有字段 -->
+    <sql id="base_column_view">
+        id,dept_name,lft,rgt,flag,org_id,deep
+    </sql>
+
+    <select id="selectByPK" resultMap="dept">
+       SELECT <include refid="base_column"/> from dept
+       WHERE id = #{id} and flag = 0
+    </select>
+    <select id="selectByName" resultMap="dept">
+        SELECT <include refid="base_column"/> from dept
+        WHERE dept_name = #{name} and flag = 0
+    </select>
+
+    <update id="updateRightByInsert">
+        <![CDATA[
+          update dept set rgt = rgt+2 where rgt >= #{right}
+        ]]>
+    </update>
+    <update id="updateLeftByInsert">
+        <![CDATA[
+          update dept set lft = lft+2 where lft >= #{right}
+        ]]>
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.syswin.systoon.research.entity.Dept">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+        insert into dept(id,dept_name,org_id,lft,rgt)
+        values(#{id},#{deptName},#{orgId},#{left},#{right})
+    </insert>
+
+    <update id="update" parameterType="com.syswin.systoon.research.entity.Dept">
+        update dept set lft = #{left},rgt = #{right},status = 0
+        where dept_name = #{deptName}
+    </update>
+
+    <update id="updateById" parameterType="com.syswin.systoon.research.entity.Dept">
+        update dept set dept_name = #{deptName}
+        where id = #{id}
+    </update>
+
+
+    <select id="maxRight" resultType="java.lang.Integer">
+        SELECT max(rgt) from dept
+    </select>
+
+    <update id="updateRightByInsertParent">
+        <![CDATA[
+        update dept set rgt = rgt + 1 where lft > 0
+        ]]>
+    </update>
+    <update id="updateLeftByInsertParent">
+        <![CDATA[
+        update dept set lft = lft + 1 where lft >0
+        ]]>
+    </update>
+
+    <update id="deleteSoft">
+        update dept set flag = 1 where lft BETWEEN #{left} AND #{right}
+    </update>
+    <update id="deleteSoftRight">
+        <![CDATA[
+        update dept set rgt = rgt-#{middle} where flag=0 and rgt > #{right}
+        ]]>
+    </update>
+    <update id="deleteSoftLeft">
+        <![CDATA[
+        update dept set lft = lft-#{middle} where flag=0 and lft > #{right}
+        ]]>
+    </update>
+
+    <select id="getChildren" resultMap="dept">
+        select
+            <include refid="base_column" />
+        from dept
+        where lft between #{left} and #{right} and flag = 0
+        order by lft asc
+    </select>
+
+    <select id="getRoot" resultMap="dept">
+        select
+            <include refid="base_column" />
+        from dept
+        where lft = 1
+    </select>
+
+    <select id="getAllChildren" resultMap="dept">
+        select <include refid="base_column" />
+        from dept
+        where lft &gt;= 1 and flag = 0
+        order by lft asc
+    </select>
+
+
+</mapper>

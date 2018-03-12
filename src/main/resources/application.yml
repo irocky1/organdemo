@@ -1,0 +1,48 @@
+#数据库连接配置
+spring:
+  datasource:
+    url: jdbc:mysql://172.28.5.92:3306/systoon_organ_demo?useUnicode=true&characterEncoding=UTF-8
+    username: syswin
+    password: syswin
+    driver-class-name: com.mysql.jdbc.Driver
+  thymeleaf:
+    mode: HTML5
+  #字符集和json格式工具
+  http:
+    encoding:
+      charset: utf-8
+    converters:
+      preferred-json-mapper: jackson
+    multipart:
+      max-file-size: 10MB
+  application:
+    name: organ-demo
+  #redis配置
+  redis:
+    host: 172.28.18.34
+    port: 6379
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+
+#mynatis配置
+mybatis:
+  type-aliases-package: com.syswin.systoon.research.entity
+  #mapper加载路径
+  mapper-locations: classpath:mapper/*Mapper.xml
+  #myatbis配置文件
+  config-location: classpath:mybatis-conf.xml
+#加载log4j2
+logging:
+  config: classpath:log4j2.xml
+  level: debug
+  file:
+server:
+  session-timeout : 3600
+  port: 8081
+
+
+
+
+
