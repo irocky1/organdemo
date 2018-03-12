@@ -12,6 +12,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ *
+ * 左右值无限级分类，也称为预排序树无限级分类，是一种有序的树状结构，
+ * 位于这些树状结构中的每一个节点都有一个“左值”和“右值”，
+ * 其规则是：每一个后代节 点的左值总是大于父类，右值总是小于父级，右值总是小于左值。
+ * 处于这些结构中的每一个节点，都可以轻易的算出其祖先或后代节点。
+ * 因此，可以用它来实现无限分类。
+ * 优点：通过一条SQL就可以获取所有的祖先或后代，这在复杂的分类中非常必要，
+ * 通过简单的四则运算就可以得到后代的数量.
+ * 由于这种方法不使用递归查询算法，有更高的查询效率,采用左右值编码的设计方案，
+ * 在进行类别树的遍历时，由于只需进行2次查询，消除了递归，再加上查询条件都为数字比较，效率极高。
+ * 这种算法比较高端，是mysql官方推荐的算法
+ *
  * Created by rocky on 2018/3/8.
  * @author rocky
  *
@@ -19,6 +31,9 @@ import java.util.List;
 @Service
 public class DeptService {
 
+    /**
+     * mapper
+     */
     @Autowired
     private DeptMapper deptMapper;
 
@@ -43,21 +58,6 @@ public class DeptService {
         return deptMapper.getRoot();
     }
 
-    /////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 左右值无限级分类，也称为预排序树无限级分类，是一种有序的树状结构，
-     * 位于这些树状结构中的每一个节点都有一个“左值”和“右值”，
-     * 其规则是：每一个后代节 点的左值总是大于父类，右值总是小于父级，右值总是小于左值。
-     * 处于这些结构中的每一个节点，都可以轻易的算出其祖先或后代节点。
-     * 因此，可以用它来实现无限分类。
-     * 优点：通过一条SQL就可以获取所有的祖先或后代，这在复杂的分类中非常必要，
-     * 通过简单的四则运算就可以得到后代的数量.
-     * 由于这种方法不使用递归查询算法，有更高的查询效率,采用左右值编码的设计方案，
-     * 在进行类别树的遍历时，由于只需进行2次查询，消除了递归，再加上查询条件都为数字比较，效率极高。
-     * 这种算法比较高端，是mysql官方推荐的算法
-     */
-
     /**
      * 插入一个部门
      * @param parentId 父部门id
@@ -78,7 +78,6 @@ public class DeptService {
         }
 
         int result = 0;
-
         /**
          * 1.有父部门，没有兄弟部门（最小的子节点，父节点的最后一个儿子）
          */
@@ -163,7 +162,7 @@ public class DeptService {
 
 
     /**
-     * 删除一个部门,默认都是逻辑删除(包含子部门)
+     * 删除一个部门,默认都是逻辑删除
      * @param id
      * @return
      */
@@ -187,11 +186,11 @@ public class DeptService {
     }
 
     /**
-     * 获取部门下所有部门节点
-     * @param deptId 不传获取所有部门
+     * 获取指定部门的所有子部门
+     * @param deptId 部门id
      * @return
      */
-    public List<DeptParam> getAllDeptList(Integer deptId){
+    public List<DeptParam> getChildrenById(Integer deptId){
 
         if(null == deptId) {
             throw new BusinessException("部门id不能为空");
@@ -204,6 +203,46 @@ public class DeptService {
         List<DeptParam> result = new LinkedList<>();
         List<Count> counts = new LinkedList<>(); //计数器
         List<Dept> deptList =  deptMapper.getChildren(thisDept);
+
+        for(Dept dept : deptList){
+            if(counts.size()>0){
+                //检查是否应该移出堆栈
+                for(int i=0; i<counts.size(); i++){
+                    if(counts.get(i).getRight() < dept.getRight()){
+                        counts.remove(i);
+                    }
+                }
+            }
+
+            String parent = counts.size()>0?counts.get(counts.size()-1).getPrev():"";
+            Integer parentId = counts.size()>0?counts.get(counts.size()-1).getPrevId():0;
+            DeptParam param = new DeptParam();
+            param.setId(dept.getId());
+            param.setDeptName(dept.getDeptName());
+            param.setLevel(counts.size());
+            param.setParent(parent);
+            param.setParentId(parentId);
+            result.add(param);
+
+            Count c = new Count();
+            c.setRight(dept.getRight());
+            c.setPrev(dept.getDeptName());
+            c.setPrevId(dept.getId());
+            counts.add(c);
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取所有部门
+     * @return
+     */
+    public List<DeptParam> getAllChildren(){
+
+        List<DeptParam> result = new LinkedList<>();
+        List<Count> counts = new LinkedList<>(); //计数器
+        List<Dept> deptList =  deptMapper.getAllChildren();
 
         for(Dept dept : deptList){
             if(counts.size()>0){

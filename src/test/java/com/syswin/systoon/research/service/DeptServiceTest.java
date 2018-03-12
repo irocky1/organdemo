@@ -59,7 +59,7 @@ public class DeptServiceTest {
     @Test
     public void getAllList(){
         Integer deptId = 28;
-        List<DeptParam> list = deptService.getAllDeptList(deptId);
+        List<DeptParam> list = deptService.getChildrenById(deptId);
         System.out.println(list);
     }
 

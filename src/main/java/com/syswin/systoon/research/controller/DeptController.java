@@ -27,22 +27,11 @@ public class DeptController {
      * 获取完整组织树json
      * @return
      */
-    @RequestMapping("/tree")
-    public String getChildren(){
-        Dept root = deptService.getRoot();
-        List<DeptParam> list = deptService.getAllDeptList(root.getId());
-        return CommonResult.success(list).toString();
-    }
-
-    /**
-     * 获取完整组织树json
-     * @return
-     */
     @RequestMapping("/treeJson")
     public String getChildrenJson(){
-        StringBuffer json = new StringBuffer(10);
-        Dept root = deptService.getRoot();
-        List<DeptParam> list = deptService.getAllDeptList(root.getId());
+//        Dept root = deptService.getRoot();
+//        List<DeptParam> list = deptService.getChildrenById(root.getId());
+        List<DeptParam> list = deptService.getAllChildren();
         List<TreeNode> nodes = buildTree(list);
         return nodes.toString();
     }
