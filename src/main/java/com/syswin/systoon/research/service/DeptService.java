@@ -7,6 +7,7 @@ import com.syswin.systoon.research.param.DeptParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,13 +16,13 @@ import java.util.List;
  *
  * 左右值无限级分类，也称为预排序树无限级分类，是一种有序的树状结构，
  * 位于这些树状结构中的每一个节点都有一个“左值”和“右值”，
- * 其规则是：每一个后代节 点的左值总是大于父类，右值总是小于父级，右值总是小于左值。
+ * 其规则是：每一个后代节 点的左值总是大于父类，右值总是小于父级，右值总是大于左值。
  * 处于这些结构中的每一个节点，都可以轻易的算出其祖先或后代节点。
  * 因此，可以用它来实现无限分类。
  * 优点：通过一条SQL就可以获取所有的祖先或后代，这在复杂的分类中非常必要，
  * 通过简单的四则运算就可以得到后代的数量.
  * 由于这种方法不使用递归查询算法，有更高的查询效率,采用左右值编码的设计方案，
- * 在进行类别树的遍历时，由于只需进行2次查询，消除了递归，再加上查询条件都为数字比较，效率极高。
+ * 在进行树的遍历时，由于只需进行2次查询，消除了递归，再加上查询条件都为数字比较，效率极高。
  * 这种算法比较高端，是mysql官方推荐的算法
  *
  * Created by rocky on 2018/3/8.
@@ -29,6 +30,7 @@ import java.util.List;
  *
  */
 @Service
+@EnableTransactionManagement
 public class DeptService {
 
     /**
@@ -46,6 +48,11 @@ public class DeptService {
         return deptMapper.selectByPK(id);
     }
 
+    /**
+     * 根据部门名称查询部门详细信息
+     * @param name
+     * @return
+     */
     public Dept selectByName(String name){
         return deptMapper.selectByName(name);
     }

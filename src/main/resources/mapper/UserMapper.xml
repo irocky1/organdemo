@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syswin.systoon.research.mapper.UserMapper">
+    <resultMap id="user" type="com.syswin.systoon.research.entity.User">
+        <id column="id" property="id"></id>
+        <result column="org_id" property="orgId"/>
+        <result column="flag" property="flag" />
+        <result column="user_name" property="userName" />
+        <result column="feed_id" property="feedId" />
+    </resultMap>
+
+    <!--主表所有字段 -->
+    <sql id="base_column">
+        id,org_id,flag,user_name,feed_id
+    </sql>
+
+    <select id="selectByPK" resultMap="user">
+       SELECT <include refid="base_column"/> from user
+       WHERE id = #{id} and flag = 0
+    </select>
+
+    <select id="selectByName" resultMap="user">
+        SELECT <include refid="base_column"/> from user
+        WHERE user_name = #{name} and flag = 0
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.syswin.systoon.research.entity.User">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+        insert into user(id,user_name,org_id,feed_id)
+        values(#{id},#{userName},#{orgId},#{feedId})
+    </insert>
+
+    <select id="queryAllUser" resultMap="user">
+        SELECT <include refid="base_column" />
+        FROM user
+        WHERE flag = 0
+    </select>
+
+</mapper>
