@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.syswin.systoon.research.mapper.DeptMapper">
-    <resultMap id="dept" type="com.syswin.systoon.research.entity.Dept">
+<mapper namespace="com.rocky.systoon.research.mapper.DeptMapper">
+    <resultMap id="dept" type="com.rocky.systoon.research.entity.Dept">
         <id column="id" property="id"></id>
         <result column="dept_name" property="deptName"/>
         <result column="lft" property="left"/>
@@ -42,7 +42,7 @@
         ]]>
     </update>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.syswin.systoon.research.entity.Dept">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.rocky.systoon.research.entity.Dept">
         <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
             SELECT LAST_INSERT_ID() as id
         </selectKey>
@@ -50,12 +50,12 @@
         values(#{id},#{deptName},#{orgId},#{left},#{right})
     </insert>
 
-    <update id="update" parameterType="com.syswin.systoon.research.entity.Dept">
+    <update id="update" parameterType="com.rocky.systoon.research.entity.Dept">
         update dept set lft = #{left},rgt = #{right},status = 0
         where dept_name = #{deptName}
     </update>
 
-    <update id="updateById" parameterType="com.syswin.systoon.research.entity.Dept">
+    <update id="updateById" parameterType="com.rocky.systoon.research.entity.Dept">
         update dept set dept_name = #{deptName}
         where id = #{id}
     </update>

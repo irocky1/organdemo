@@ -28,7 +28,7 @@ spring:
 
 #mybatis配置
 mybatis:
-  type-aliases-package: com.syswin.systoon.research.entity
+  type-aliases-package: com.rocky.systoon.research.entity
   #mapper加载路径
   mapper-locations: classpath:mapper/*Mapper.xml
   #myatbis配置文件

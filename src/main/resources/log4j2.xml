@@ -18,7 +18,7 @@
         <logger name="log4j.logger.java.sql" level="debug" additivity="false">
             <appender-ref ref="Console"/>
         </logger>
-        <logger name="com.syswin.systoon.research.mapper" level="debug"/>
+        <logger name="com.rocky.systoon.research.mapper" level="debug"/>
         <root level="info">
             <appenderref ref="Console"/>
         </root>
