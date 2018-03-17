@@ -62,7 +62,7 @@
 
 
     <select id="maxRight" resultType="java.lang.Integer">
-        SELECT max(rgt) from dept
+        SELECT ifnull(max(rgt),1) from dept
     </select>
 
     <update id="updateRightByInsertParent">

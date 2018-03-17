@@ -63,5 +63,11 @@ public class DeptServiceTest {
         System.out.println(list);
     }
 
+    @Test
+    public void getchildren(){
+       List<DeptParam> list =  deptService.getAllChildren();
+       System.out.print(list);
+    }
+
 
 }

@@ -254,7 +254,7 @@ public class DeptService {
         for(Dept dept : deptList){
             if(counts.size()>0){
                 //检查是否应该移出堆栈
-                for(int i=0; i<counts.size(); i++){
+                for(int i=counts.size()-1; i>0; i--){
                     if(counts.get(i).getRight() < dept.getRight()){
                         counts.remove(i);
                     }
