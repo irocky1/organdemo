@@ -51,7 +51,7 @@
     </insert>
 
     <update id="update" parameterType="com.rocky.me.research.entity.Dept">
-        update dept set lft = #{left},rgt = #{right},status = 0
+        update dept set lft = #{left},rgt = #{right},flag = 0
         where dept_name = #{deptName}
     </update>
 
@@ -62,7 +62,7 @@
 
 
     <select id="maxRight" resultType="java.lang.Integer">
-        SELECT ifnull(max(rgt),1) from dept
+        SELECT ifnull(max(rgt),0) from dept
     </select>
 
     <update id="updateRightByInsertParent">
