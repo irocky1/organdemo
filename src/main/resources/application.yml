@@ -19,7 +19,7 @@ spring:
     name: organ-demo
   #redis配置
   redis:
-    host: 172.28.18.34
+    host: x.x.x.x
     port: 6379
     pool:
       max-active: 8
